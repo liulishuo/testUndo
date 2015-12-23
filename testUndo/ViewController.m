@@ -25,7 +25,7 @@ static const NSInteger  kMaxLength = 6;
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    [_tf addTarget:self action:@selector(textFieldTextDidChanged:) forControlEvents:UIControlEventEditingChanged];
+    //    [_tf addTarget:self action:@selector(textFieldTextDidChanged:) forControlEvents:UIControlEventEditingChanged];
     
 }
 
@@ -35,59 +35,55 @@ static const NSInteger  kMaxLength = 6;
 }
 
 - (IBAction)click:(id)sender {
-//    _tf.text = @"123";
     
-    
-    [self.undoManager registerUndoWithTarget:self selector:@selector(setTest:) object:@"123"];
-    [self.undoManager setActionName:@"ABC"];
-    self.test = @"123";
+    //    [_tf updateText:@"ABC"];
+    _tf.text = @"ABC";
 }
 
 
 //微信
 - (void)textFieldTextDidChanged:(UITextField *)sender
 {
-    NSString * toBeString = sender.text;
+    NSString * tempString = sender.text;
     
-    //同一个action不能注册两次 否则redo有问题
-//    [sender updateText:toBeString];
-    
-    if (sender.markedTextRange == nil && toBeString.length > kMaxLength)
+    if (sender.markedTextRange == nil && tempString.length > kMaxLength)
     {
-        sender.text = [toBeString substringToIndex:kMaxLength];
+        sender.text = [tempString substringToIndex:kMaxLength];
         [sender.undoManager removeAllActions];
-//        [sender updateText:[toBeString substringToIndex:kMaxLength]];
+        //        [sender updateText:[toBeString substringToIndex:kMaxLength]];
     }
 }
 
-//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-//{
-//    
-//    
-//    
-//    if([string isEqualToString:@""])
-//    {
-//        return YES;
-//    }
-//    
-//    NSInteger kMaxLength = 6;
-//
-//    if(textField.text.length == kMaxLength)
-//    {
-//        return NO;
-//    }
-//    
-//    NSString * toBeString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-//    NSLog(@"%@",toBeString);
-//    
-//    if (toBeString.length > kMaxLength && range.length!=1 && ![string isEqualToString:@"\n"])
-//    {
-//        textField.text = [toBeString substringToIndex:kMaxLength];
-//        return NO;
-//    }
-//    
-//    return YES;
-//}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    
+    //退格
+    if([string isEqualToString:@""])
+    {
+        return YES;
+    }
+    
+    //非联想状态
+    if(!textField.markedTextRange)
+    {
+        NSString * tempString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        NSLog(@"%@",tempString);
+        
+        if (tempString.length > kMaxLength)
+        {
+            textField.text = [tempString substringToIndex:kMaxLength];
+            return NO;
+        }
+    }
+    
+    //文本长度满不允许编辑
+    if(textField.text.length >= kMaxLength)
+    {
+        return NO;
+    }
+    
+    return YES;
+}
 
 //喜马拉雅
 //- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
