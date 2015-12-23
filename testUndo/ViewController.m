@@ -15,8 +15,6 @@ static const NSInteger  kMaxLength = 6;
 
 @property (weak, nonatomic) IBOutlet UITextField *tf;
 
-@property (nonatomic, strong) NSString *test;
-
 @end
 
 @implementation ViewController
@@ -25,7 +23,10 @@ static const NSInteger  kMaxLength = 6;
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    //    [_tf addTarget:self action:@selector(textFieldTextDidChanged:) forControlEvents:UIControlEventEditingChanged];
+    [_tf addTarget:self action:@selector(textFieldTextDidChanged:) forControlEvents:UIControlEventEditingChanged];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToEndEdit)];
+    [self.view addGestureRecognizer:tap];
     
 }
 
@@ -34,9 +35,14 @@ static const NSInteger  kMaxLength = 6;
     // Dispose of any resources that can be recreated.
 }
 
+- (void)tapToEndEdit
+{
+    [self.view endEditing:YES];
+}
+
 - (IBAction)click:(id)sender {
     
-    //    [_tf updateText:@"ABC"];
+//    [_tf updateText:@"ABC"];
     _tf.text = @"ABC";
 }
 
@@ -48,42 +54,46 @@ static const NSInteger  kMaxLength = 6;
     
     if (sender.markedTextRange == nil && tempString.length > kMaxLength)
     {
+
         sender.text = [tempString substringToIndex:kMaxLength];
         [sender.undoManager removeAllActions];
-        //        [sender updateText:[toBeString substringToIndex:kMaxLength]];
+        
+        //手动注册
+//        [sender updateText:[tempString substringToIndex:kMaxLength]];
     }
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    
-    //退格
-    if([string isEqualToString:@""])
-    {
-        return YES;
-    }
-    
-    //非联想状态
-    if(!textField.markedTextRange)
-    {
-        NSString * tempString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-        NSLog(@"%@",tempString);
-        
-        if (tempString.length > kMaxLength)
-        {
-            textField.text = [tempString substringToIndex:kMaxLength];
-            return NO;
-        }
-    }
-    
-    //文本长度满不允许编辑
-    if(textField.text.length >= kMaxLength)
-    {
-        return NO;
-    }
-    
-    return YES;
-}
+//微信
+//- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+//{
+//    
+//    //退格
+//    if([string isEqualToString:@""])
+//    {
+//        return YES;
+//    }
+//    
+//    //文本长度满不允许编辑 防止系统九宫格键盘在此时传入数字标号字符
+//    if(textField.text.length >= kMaxLength)
+//    {
+//        return NO;
+//    }
+//    
+//    //非联想状态
+//    if(!textField.markedTextRange)
+//    {
+//        NSString * tempString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+//        NSLog(@"%@",tempString);
+//        
+//        if (tempString.length > kMaxLength)
+//        {
+//            textField.text = [tempString substringToIndex:kMaxLength];
+//            return NO;
+//        }
+//    }
+//    
+//    return YES;
+//}
 
 //喜马拉雅
 //- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
